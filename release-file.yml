@@ -1,0 +1,7 @@
+---
+- hosts: "{{ RELEASE_HOST }}"
+  connection: local
+  #become: yes
+  roles:
+    - copy_file
+

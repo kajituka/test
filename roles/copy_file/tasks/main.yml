@@ -1,0 +1,79 @@
+---
+####################
+# ファイルの配備処理（Linux）
+####################
+
+- include_vars: chmod.yml
+- include_vars: chown.yml
+
+- name: ファイルコピー前削除対象チェック処理１（Linux）
+  stat:
+    path: "{{ BATSCR_ROOT }}/ansible"
+  register: share_path
+
+- name: ファイルコピー前削除処理１（Linux）
+  shell: rm -r "{{ BATSCR_ROOT }}/ansible"
+  when: share_path.stat.exists
+
+- name: ファイルコピー前削除対象チェック処理２（Linux）
+  stat:
+    path: "{{ BATSCR_ROOT }}/{{ BATSCR_ARCHIVE_FILE }}"
+  register: archive_path
+
+- name: ファイルコピー前削除処理２（Linux）
+  shell: rm -r "{{ BATSCR_ROOT }}/{{ BATSCR_ARCHIVE_FILE }}"
+  when: archive_path.stat.exists
+
+- name: ファイルのコピー処理（Linux）
+  copy:
+    src: "{{ item }}"
+    dest: "{{ BATSCR_ROOT }}"
+  with_items: "{{ BATSCR_SERVER_COPY_FILES }}"
+
+- name: 配備先の事前バックアップ処理（Linux）
+  shell: tar -czvf {{ BATSCR_BUCKUP_DIR }}/{{ BATSCR_BACKUP_FILE_NAME }}_`date "+%Y%m%d%H%M%S"`.tar.gz {{ BATSCR_DEPLOY_DIR }}
+
+- name: バックアップ世代数の取得
+  shell: ls {{ BATSCR_BUCKUP_DIR }}/{{ BATSCR_BACKUP_FILE_NAME }}*.tar.gz | wc -l
+  register: BATSCR_BUCKUP_NUM
+
+- name: 不要世代数の取得
+  shell: expr {{ BATSCR_BUCKUP_NUM.stdout }} - {{ BATSCR_BUCKUP_KEEP_NUM }}
+  register: BATSCR_BUCKUP_DELETE_NUM
+  failed_when: BATSCR_BUCKUP_DELETE_NUM.rc not in [0, 1]
+
+- name: 指定世代数前のバックアップを削除
+  shell: rm `ls {{ BATSCR_BUCKUP_DIR }}/{{ BATSCR_BACKUP_FILE_NAME }}*.tar.gz | head -{{ BATSCR_BUCKUP_DELETE_NUM.stdout }}`
+  when: BATSCR_BUCKUP_DELETE_NUM.stdout|int > 0
+
+- name: ファイルの解凍処理（Linux）
+  shell: unzip {{ BATSCR_ROOT }}/{{ BATSCR_ARCHIVE_FILE }}
+  args:
+    chdir: "{{ BATSCR_ROOT }}"
+
+- name: 配備前状態の表示（Linux）
+  shell: ls -lR {{ BATSCR_DEPLOY_DIR }}
+  register: out
+- debug: var=out.stdout_lines
+
+- name: ファイルの配備処理（Linux）
+  shell: \cp -rf {{ BATSCR_ROOT }}/ansible/* {{ BATSCR_DEPLOY_DIR }}/
+  ignore_errors: yes
+
+- name: ファイルの権限変更処理（Linux）
+  shell: sudo chmod {{ item.1 }} {{ item.0 }}
+  with_nested:
+    - "{{ BATSCR_CHANGE_MODE_FILES_ITEMS }}"
+  when: item.0 != '0'
+
+- name: ファイルのオーナー変更処理（Linux）
+  shell: sudo chown {{ item.1 }}:{{ item.2 }} {{ item.0 }}
+  with_nested:
+    - "{{ BATSCR_CHANGE_OWNER_FILES_ITEMS }}"
+  when: item.0 != '0'
+
+- name: 配備後状態の表示（Linux）
+  shell: ls -lR {{ BATSCR_DEPLOY_DIR }}
+  register: out
+- debug: var=out.stdout_lines
+
