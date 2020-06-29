@@ -1,0 +1,5 @@
+BATSCR_CHANGE_MODE_FILES_ITEMS:
+  - ['/var/work/deploywork/deploy2/var/work/deploytest/flat1.txt', '664']
+  - ['/var/work/deploywork/deploy2/var/work/deploytest/flat2.txt', '775']
+  - ['/var/work/deploywork/deploy2/var/work/deploytest/dir2', '744']
+  - ['/var/work/deploywork/deploy2/var/work/deploytest/dir2/*', '754']
