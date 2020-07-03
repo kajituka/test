@@ -56,24 +56,23 @@
   register: out
 - debug: var=out.stdout_lines
 
-- name: ファイルの配備処理（Linux）
-  shell: \cp -rf {{ BATSCR_ROOT }}/ansible/* {{ BATSCR_DEPLOY_DIR }}/
-  ignore_errors: yes
-
 - name: ファイルの権限変更処理（Linux）
-  shell: sudo chmod {{ item.1 }} {{ item.0 }}
+  shell: sudo chmod {{ item.1 }} {{ BATSCR_ROOT }}/{{ item.0 }}
   with_nested:
     - "{{ BATSCR_CHANGE_MODE_FILES_ITEMS }}"
   when: item.0 != '0'
 
 - name: ファイルのオーナー変更処理（Linux）
-  shell: sudo chown {{ item.1 }}:{{ item.2 }} {{ item.0 }}
+  shell: sudo chown {{ item.1 }}:{{ item.2 }} {{ BATSCR_ROOT }}/{{ item.0 }}
   with_nested:
     - "{{ BATSCR_CHANGE_OWNER_FILES_ITEMS }}"
   when: item.0 != '0'
+
+- name: ファイルの配備処理（Linux）
+  shell: \cp -rf {{ BATSCR_ROOT }}/ansible/{{ BATSCR_DEPLOY_DIR }}/* {{ BATSCR_DEPLOY_DIR }}/
+  ignore_errors: yes
 
 - name: 配備後状態の表示（Linux）
   shell: ls -lR {{ BATSCR_DEPLOY_DIR }}
   register: out
 - debug: var=out.stdout_lines
-
