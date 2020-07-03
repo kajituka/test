@@ -57,13 +57,13 @@
 - debug: var=out.stdout_lines
 
 - name: ファイルの権限変更処理（Linux）
-  shell: chmod {{ item.1 }} {{ BATSCR_ROOT }}/ansible{{ item.0 }}
+  shell: sudo chmod {{ item.1 }} {{ BATSCR_ROOT }}/ansible{{ item.0 }}
   with_nested:
     - "{{ BATSCR_CHANGE_MODE_FILES_ITEMS }}"
   when: item.0 != '0'
 
 - name: ファイルのオーナー変更処理（Linux）
-  shell: chown {{ item.1 }}:{{ item.2 }} {{ BATSCR_ROOT }}/ansible{{ item.0 }}
+  shell: sudo chown {{ item.1 }}:{{ item.2 }} {{ BATSCR_ROOT }}/ansible{{ item.0 }}
   with_nested:
     - "{{ BATSCR_CHANGE_OWNER_FILES_ITEMS }}"
   when: item.0 != '0'
