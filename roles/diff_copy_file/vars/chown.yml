@@ -1,0 +1,4 @@
+BATSCR_CHANGE_OWNER_FILES_ITEMS:
+  - ['/var/work/deploywork/deploy2/var/work/deploytest/flat1.txt', 'jenkins', 'jenkins']
+  - ['/var/work/deploywork/deploy2/var/work/deploytest/dir2', 'jenkins', 'jenkins']
+  - ['/var/work/deploywork/deploy2/var/work/deploytest/dir2/*', 'owner', 'owner']
