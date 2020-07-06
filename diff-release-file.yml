@@ -1,0 +1,6 @@
+---
+- hosts: "{{ RELEASE_HOST }}"
+  become: yes
+  roles:
+    - diff_copy_file
+
