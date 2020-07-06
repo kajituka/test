@@ -69,7 +69,7 @@
   when: item.0 != '0'
 
 - name: ファイルの配備処理（Linux）
-  shell: \cp -rf --preserve=all {{ BATSCR_ROOT }}/ansible{{ BATSCR_DEPLOY_DIR }}/* {{ BATSCR_DEPLOY_DIR }}/
+  shell: \sudo cp -rf --preserve=all {{ BATSCR_ROOT }}/ansible{{ BATSCR_DEPLOY_DIR }}/* {{ BATSCR_DEPLOY_DIR }}/
   ignore_errors: yes
 
 - name: 配備後状態の表示（Linux）
