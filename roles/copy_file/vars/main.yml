@@ -1,6 +1,6 @@
 RELEASE_HOST: default
 BATSCR_SERVER_COPY_FILES:
-  - ['/var/lib/jenkins/workspace/ANSIBLE_TEST_2/flatfiles.zip']
+  - ['/var/lib/jenkins/workspace/ANSIBLE_TEST_3/flatfiles.zip']
 BATSCR_DEPLOY_DIR: /var/work/deploywork/deploy2
 BATSCR_BUCKUP_DIR: /var/work/deploywork/buckup
 BATSCR_BACKUP_FILE_NAME: bakfile
